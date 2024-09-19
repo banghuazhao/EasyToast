@@ -1,6 +1,14 @@
 # EasyToast
 
-**EasyToast** is a simple, lightweight, flexible, and easy-to-use library for showing toast in **SwiftUI**. Whether you need a quick and easy way to present a brief message to your users or a fully custom-designed toast, EasyToast provides the tools to do it seamlessly.
+[![Version](https://img.shields.io/github/v/release/banghuazhao/EasyToast)](https://github.com/banghuazhao/EasyToast/releases)
+[![License](https://img.shields.io/github/license/banghuazhao/EasyToast)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-iOS%20|%20macOS-blue)](#)
+[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
+
+## Introduction
+
+**EasyToast** is a lightweight and customizable SwiftUI package that provides easy-to-use toast notifications. Display brief messages to your users with minimal effort.
+
 
 ## Features
 
@@ -8,6 +16,12 @@
 - **Custom Toast Views**: Create and display fully custom-designed toast notifications.
 - **Flexible Positioning**: Position the toast at the top, center, or bottom of the screen.
 - **Configurable Duration**: Control how long the toast remains visible.
+- **Customizable appearance**: Control background color, text color, corner radius, font, padding, shadow, and text alignment
+- **Interactive toasts**: Working in progress 🔨
+- **Toast queueing**: Working in progress 🔨
+- **Improved animations**: Working in progress 🔨
+- **Internationalization**: Working in progress 🔨
+- **Accessibility support**: Working in progress 🔨
 
 ## 🧳 Requirements
 
@@ -20,9 +34,17 @@
 
 You can add EasyToast to your project using [Swift Package Manager](https://swift.org/package-manager/).
 
-1. In Xcode, go to `File > Add Packages...`
-2. Enter the package URL: https://github.com/banghuazhao/EasyToast
-3. Select the desired version or branch and add it to your project.
+1. Open your project in Xcode.
+2. Go to `File > Add Packages Dependencies...`
+3. Enter the package URL: https://github.com/banghuazhao/EasyToast
+3. Choose the latest release
+
+Alternatively, add the following to your `Package.swift` file:
+```swift
+dependencies: [
+    .package(url: "https://github.com/banghuazhao/EasyToast.git", from: "1.0.0")
+]
+```
 
 ## 🛠 Usage
 
@@ -33,9 +55,13 @@ To display a simple toast with a message, use the `easyToast` modifier:
 ```swift
 import EasyToast
 
-var body: some View {
-    content
-        .easyToast(isPresented: $showToast, message: "This is a toast message")
+struct ContentView: View {
+    @State private var showToast = false
+
+    var body: some View {
+        content
+            .easyToast(isPresented: $showToast, message: "Hello, EasyToast!")
+    }
 }
 ```
 
@@ -61,7 +87,7 @@ To display a custom-designed toast view, use the `easyToast` modifier with a cus
 ```swift
 var body: some View {
     content
-        .easyToast(isPresented: $showToast, duration: 3, position: .bottom) {
+        .customToast(isPresented: $showToast, duration: 3, position: .bottom) {
             HStack {
                 Image(systemName: "checkmark.circle")
                     .foregroundColor(.white)
