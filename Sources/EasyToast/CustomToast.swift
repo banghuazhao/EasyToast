@@ -1,57 +1,27 @@
 //
-// Created by Banghua Zhao on 30/08/2024
+// Created by Banghua Zhao on 19/09/2024
 // Copyright Apps Bay Limited. All rights reserved.
 //
+  
 
 import SwiftUI
 
-public struct ToastStyle {
-    public var backgroundColor: Color
-    public var textColor: Color
-    public var font: Font
-    public var cornerRadius: CGFloat
-    public var shadow: Color
-    public var padding: EdgeInsets
-    public var multilineTextAlignment: TextAlignment
-
-    public init(
-        backgroundColor: Color = Color.black.opacity(0.8),
-        textColor: Color = .white,
-        font: Font = .system(size: 14),
-        cornerRadius: CGFloat = 8,
-        shadow: Color = .clear,
-        padding: EdgeInsets = EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12),
-        multilineTextAlignment: TextAlignment = .leading
-    ) {
-        self.backgroundColor = backgroundColor
-        self.textColor = textColor
-        self.font = font
-        self.cornerRadius = cornerRadius
-        self.shadow = shadow
-        self.padding = padding
-        self.multilineTextAlignment = multilineTextAlignment
-    }
-}
-
-struct EasyToast: ViewModifier {
+struct CustomToast<CustomView: View>: ViewModifier {
     @Binding var isPresented: Bool
-    private let message: String
     private let duration: Double
     private let position: ToastPosition
-    private let style: ToastStyle
+    let customView: CustomView
 
     init(
         isPresented: Binding<Bool>,
-        message: String,
-        duration: TimeInterval,
         position: ToastPosition,
-        style: ToastStyle = ToastStyle()
+        duration: Double,
+        customView: CustomView
     ) {
         _isPresented = isPresented
-        self.message = message
         self.duration = duration
         self.position = position
-        self.style = style
+        self.customView = customView
     }
 
     @State private var showToast: Bool = false
@@ -96,7 +66,7 @@ struct EasyToast: ViewModifier {
 
     @ViewBuilder
     private var toastView: some View {
-        SimpleMessageView(message: message, style: style)
+        customView
     }
 
     private var alignment: Alignment {
@@ -113,40 +83,48 @@ struct EasyToast: ViewModifier {
 
 public extension View {
     /**
-     Displays a simple toast notification with a text message.
+     Displays a toast notification with a custom view.
 
      - Parameters:
         - isPresented: A binding to a boolean value that determines whether the toast is presented.
-        - message: The message text to be displayed in the toast.
         - duration: The duration in seconds for which the toast is displayed. The default value is 2 seconds.
         - position: The position on the screen where the toast is displayed. The default is `.center`.
+        - customView: A closure that returns the custom view to be displayed as the toast content.
 
-     - Returns: A view that displays the original content overlaid with a toast notification when `isPresented` is `true`.
+     - Returns: A view that displays the original content overlaid with a custom toast view when `isPresented` is `true`.
 
-     Use this method to present a brief message to the user. The toast will automatically disappear after the specified duration.
+     Use this method to present a custom-designed toast view. The toast will automatically disappear after the specified duration.
 
      - Note: The toast will only appear when `isPresented` is set to `true`.
 
      Example usage:
      ```swift
      Text("Hello, World!")
-         .easyToast(isPresented: $showToast, message: "This is a toast message")
+         .customToast(isPresented: $showToast, duration: 3, position: .bottom) {
+             HStack {
+                 Image(systemName: "checkmark.circle")
+                     .foregroundColor(.white)
+                 Text("Show Custom Toast Success")
+                     .foregroundColor(.white)
+             }
+             .padding()
+             .background(Color.green)
+             .cornerRadius(20)
+         }
      ```
      */
-    func easyToast(
+    func customToast(
         isPresented: Binding<Bool>,
-        message: String,
         duration: Double = 2,
         position: ToastPosition = .center,
-        style: ToastStyle = ToastStyle()
+        @ViewBuilder customView: @escaping () -> some View
     ) -> some View {
         modifier(
-            EasyToast(
+            CustomToast(
                 isPresented: isPresented,
-                message: message,
-                duration: duration,
                 position: position,
-                style: style
+                duration: duration,
+                customView: customView()
             )
         )
     }

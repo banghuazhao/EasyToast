@@ -8,38 +8,53 @@ import SwiftUI
 
 struct ContentView: View {
     @State var showToast: Bool = false
-    @State var showSimpleMessageToastOnTop: Bool = false
-    @State var showSimpleMessageToastOnCenter: Bool = false
-    @State var showSimpleMessageToastOnBottom: Bool = false
-    @State var showCustomToast: Bool = false
+    @State var showDefaultToastOnTop: Bool = false
+    @State var showDefaultToastOnCenter: Bool = false
+    @State var showDefaultToastOnBottom: Bool = false
+    @State var showCustomToastStyle1: Bool = false
+    @State var showCustomToastStyle2: Bool = false
+    @State var showCustomToastStyle3: Bool = false
+    @State var showCustomToastView: Bool = false
 
     var body: some View {
         List {
-            Button("Simple Message Toast") {
+            Button("Default Toast") {
                 showToast = true
             }
-            Button("Simple Message Toast on Top") {
-                showSimpleMessageToastOnTop = true
+            Button("Default Toast on Top") {
+                showDefaultToastOnTop = true
             }
-            Button("Simple Message Toast on Center") {
-                showSimpleMessageToastOnCenter = true
+            Button("Default Toast on Center") {
+                showDefaultToastOnCenter = true
             }
-            Button("Simple Message Toast on Bottom") {
-                showSimpleMessageToastOnBottom = true
+            Button("Default Toast on Bottom") {
+                showDefaultToastOnBottom = true
             }
-            Button("Custom Message Toast") {
-                showCustomToast = true
+            Button("Custom Toast Style 1: background and text color") {
+                showCustomToastStyle1 = true
+            }
+            Button("Custom Toast Style 2: font, corner radius and padding") {
+                showCustomToastStyle2 = true
+            }
+            Button("Custom Toast Style 3: shadow and text alignment") {
+                showCustomToastStyle3 = true
+            }
+            Button("Custom Toast View") {
+                showCustomToastView = true
             }
         }
-        .easyToast(isPresented: $showToast, message: "This is a toast message")
-        .easyToast(isPresented: $showSimpleMessageToastOnTop, message: "Simple Message Toast on Top", position: .top)
-        .easyToast(isPresented: $showSimpleMessageToastOnCenter, message: "Simple Message Toast on Center", position: .center)
-        .easyToast(isPresented: $showSimpleMessageToastOnBottom, message: "Simple Message Toast on Bottom", position: .bottom)
-        .easyToast(isPresented: $showCustomToast) {
+        .easyToast(isPresented: $showToast, message: "Default Toast")
+        .easyToast(isPresented: $showDefaultToastOnTop, message: "Default Toast on Top", position: .top)
+        .easyToast(isPresented: $showDefaultToastOnCenter, message: "Default Toast on Center", position: .center)
+        .easyToast(isPresented: $showDefaultToastOnBottom, message: "Default Toast on Bottom", position: .bottom)
+        .easyToast(isPresented: $showCustomToastStyle1, message: "Custom Toast Style 1", style: ToastStyle(backgroundColor: .blue, textColor: .white))
+        .easyToast(isPresented: $showCustomToastStyle2, message: "Custom Toast Style 2", style: ToastStyle(font: .system(size: 20), cornerRadius: 20, padding: .init(top: 10, leading: 20, bottom: 10, trailing: 20)))
+        .easyToast(isPresented: $showCustomToastStyle3, message: "Custom Toast Style 3: shadow and text alignment and more text for test", style: ToastStyle(shadow: .gray, multilineTextAlignment: .leading))
+        .customToast(isPresented: $showCustomToastView) {
             HStack {
                 Image(systemName: "checkmark.circle")
                     .foregroundColor(.white)
-                Text("Show Custom Toast Success")
+                Text("Show Toast Success")
                     .foregroundColor(.white)
             }
             .padding()
