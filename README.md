@@ -10,7 +10,7 @@
 **EasyToast** is a lightweight and customizable SwiftUI package that provides easy-to-use toast notifications. Display brief messages to your users with minimal effort.
 
 
-## Features
+## ✨ Features
 
 - **Simple Text Toasts**: Display a quick message to the user with just a few lines of code.
 - **Custom Toast Views**: Create and display fully custom-designed toast notifications.
@@ -42,13 +42,13 @@ You can add EasyToast to your project using [Swift Package Manager](https://swif
 Alternatively, add the following to your `Package.swift` file:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/banghuazhao/EasyToast.git", from: "1.0.0")
+    .package(url: "https://github.com/banghuazhao/EasyToast.git", from: "0.1")
 ]
 ```
 
 ## 🛠 Usage
 
-### Displaying a Simple Toast
+### Quick Start
 
 To display a simple toast with a message, use the `easyToast` modifier:
 
@@ -80,6 +80,31 @@ var body: some View {
 
 <img src="./Images/2.png" width=200 />
 
+### Customization
+
+Customize the appearance and behavior:
+
+```swift
+let customStyle = ToastStyle(
+    backgroundColor: .blue,
+    textColor: .white,
+    font: .headline,
+    cornerRadius: 12,
+    shadow: .gray,
+    padding: EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+)
+
+Text("Custom Toast")
+    .easyToast(
+        isPresented: $showToast,
+        message: "This is a custom toast message.",
+        position: .bottom,
+        duration: 3
+        style: customStyle
+    )
+
+```
+
 ### Displaying a Custom Toast
 
 To display a custom-designed toast view, use the `easyToast` modifier with a custom view:
@@ -106,3 +131,6 @@ var body: some View {
 ## 💡 Idea
 
 The toast is implemented by overlaying a custom view on top of the view that applies the `.easyToast` modifier, ensuring it seamlessly appears over the current content without disrupting the underlying layout
+
+## License
+EasyToast is released under the MIT License. See LICENSE for details.
