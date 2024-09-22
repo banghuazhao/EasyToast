@@ -14,6 +14,7 @@ struct ContentView: View {
     @State var showCustomToastStyle1: Bool = false
     @State var showCustomToastStyle2: Bool = false
     @State var showCustomToastStyle3: Bool = false
+    @State var showToastTypeSuccess: Bool = false
     @State var showCustomToastView: Bool = false
 
     var body: some View {
@@ -39,6 +40,9 @@ struct ContentView: View {
             Button("Custom Toast Style 3: shadow and text alignment") {
                 showCustomToastStyle3 = true
             }
+            Button("Toast Type Success") {
+                showToastTypeSuccess = true
+            }
             Button("Custom Toast View") {
                 showCustomToastView = true
             }
@@ -47,9 +51,36 @@ struct ContentView: View {
         .easyToast(isPresented: $showDefaultToastOnTop, message: "Default Toast on Top", position: .top)
         .easyToast(isPresented: $showDefaultToastOnCenter, message: "Default Toast on Center", position: .center)
         .easyToast(isPresented: $showDefaultToastOnBottom, message: "Default Toast on Bottom", position: .bottom)
-        .easyToast(isPresented: $showCustomToastStyle1, message: "Custom Toast Style 1", style: ToastStyle(backgroundColor: .blue, textColor: .white))
-        .easyToast(isPresented: $showCustomToastStyle2, message: "Custom Toast Style 2", style: ToastStyle(font: .system(size: 20), cornerRadius: 20, padding: .init(top: 10, leading: 20, bottom: 10, trailing: 20)))
-        .easyToast(isPresented: $showCustomToastStyle3, message: "Custom Toast Style 3: shadow and text alignment and more text for test", style: ToastStyle(shadow: .gray, multilineTextAlignment: .leading))
+        .easyToast(
+            isPresented: $showCustomToastStyle1,
+            message: "Custom Toast Style 1",
+            style: ToastStyle(
+                backgroundColor: .blue,
+                textColor: .white
+            )
+        )
+        .easyToast(
+            isPresented: $showCustomToastStyle2,
+            message: "Custom Toast Style 2",
+            style: ToastStyle(
+                font: .system(size: 20),
+                cornerRadius: 20,
+                padding: .init(top: 10, leading: 20, bottom: 10, trailing: 20)
+            )
+        )
+        .easyToast(
+            isPresented: $showCustomToastStyle3,
+            message: "Custom Toast Style 3: shadow and text alignment and more text for test",
+            style: ToastStyle(
+                shadow: .gray,
+                multilineTextAlignment: .leading
+            )
+        )
+        .easyToast(
+            isPresented: $showToastTypeSuccess,
+            message: "Operation Successful",
+            type: .success
+        )
         .customToast(isPresented: $showCustomToastView) {
             HStack {
                 Image(systemName: "checkmark.circle")

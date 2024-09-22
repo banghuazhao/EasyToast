@@ -5,34 +5,6 @@
 
 import SwiftUI
 
-public struct ToastStyle {
-    public var backgroundColor: Color
-    public var textColor: Color
-    public var font: Font
-    public var cornerRadius: CGFloat
-    public var shadow: Color
-    public var padding: EdgeInsets
-    public var multilineTextAlignment: TextAlignment
-
-    public init(
-        backgroundColor: Color = Color.black.opacity(0.8),
-        textColor: Color = .white,
-        font: Font = .system(size: 14),
-        cornerRadius: CGFloat = 8,
-        shadow: Color = .clear,
-        padding: EdgeInsets = EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12),
-        multilineTextAlignment: TextAlignment = .leading
-    ) {
-        self.backgroundColor = backgroundColor
-        self.textColor = textColor
-        self.font = font
-        self.cornerRadius = cornerRadius
-        self.shadow = shadow
-        self.padding = padding
-        self.multilineTextAlignment = multilineTextAlignment
-    }
-}
-
 struct EasyToast: ViewModifier {
     @Binding var isPresented: Bool
     private let message: String
@@ -147,6 +119,44 @@ public extension View {
                 duration: duration,
                 position: position,
                 style: style
+            )
+        )
+    }
+
+    /**
+     Displays a toast notification with a text message.
+
+     - Parameters:
+        - isPresented: A binding to a boolean value that determines whether the toast is presented. Set this to `true` to show the toast, and the toast will automatically disappear after the specified duration.
+        - message: The message text to be displayed in the toast. This is a `String` value and will be the content of the toast notification.
+        - duration: The duration in seconds for which the toast is displayed. The default value is 2 seconds. After this time has passed, the toast will automatically disappear.
+        - position: The position on the screen where the toast is displayed. This can be `.top`, `.center`, or `.bottom`. The default is `.center`.
+        - type: The type of toast to display. This can be `.success`, `.error`, `.warning`, or `.info`. The type determines the default appearance of the toast. The default is `.info`.
+
+     - Returns: A view that displays the original content overlaid with a toast notification when `isPresented` is `true`.
+
+     Use this method to present brief notifications to the user, such as success messages, error alerts, or warnings. The toast will automatically disappear after the specified duration.
+
+     Example usage:
+     ```swift
+     Text("Hello, World!")
+         .easyToast(isPresented: $showToast, message: "Operation Successful", type: .success)
+     ```
+     **/
+    func easyToast(
+        isPresented: Binding<Bool>,
+        message: String,
+        duration: Double = 2,
+        position: ToastPosition = .center,
+        type: ToastType
+    ) -> some View {
+        modifier(
+            EasyToast(
+                isPresented: isPresented,
+                message: message,
+                duration: duration,
+                position: position,
+                style: type.style
             )
         )
     }
