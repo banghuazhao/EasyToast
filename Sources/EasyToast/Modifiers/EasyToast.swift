@@ -11,28 +11,35 @@ struct EasyToast: ViewModifier {
     private let duration: Double
     private let position: ToastPosition
     private let style: ToastStyle
+    private let onTap: (() -> Void)?
+    
+    @State private var showToast: Bool = false
+    @State private var dismissToastTask: Task<Void, Never>?
 
     init(
         isPresented: Binding<Bool>,
         message: String,
         duration: TimeInterval,
         position: ToastPosition,
-        style: ToastStyle = ToastStyle()
+        style: ToastStyle = ToastStyle(),
+        onTap: (() -> Void)? = nil
     ) {
         _isPresented = isPresented
         self.message = message
         self.duration = duration
         self.position = position
         self.style = style
+        self.onTap = onTap
     }
-
-    @State private var showToast: Bool = false
 
     public func body(content: Content) -> some View {
         content
             .overlay(alignment: alignment) {
                 if showToast {
                     toast
+                        .onTapGesture {
+                            onTap?()
+                        }
                 }
             }
             .onChange(of: isPresented) { newValue in
@@ -40,15 +47,30 @@ struct EasyToast: ViewModifier {
                     withAnimation {
                         showToast = true
                     }
-                    Task { @MainActor in
+                    cancelDismissToastTask() // Cancel the existing task if it exists
+                    dismissToastTask = Task { @MainActor in
                         try? await Task.sleep(nanoseconds: UInt64(duration) * 1000000000)
-                        withAnimation {
-                            isPresented = false
-                            showToast = false
-                        }
+                        dismissToast()
+                    }
+                } else  {
+                    cancelDismissToastTask() // Cancel the existing task if it exists
+                    withAnimation {
+                        showToast = false
                     }
                 }
             }
+    }
+
+    private func dismissToast() {
+        withAnimation {
+            isPresented = false
+            showToast = false
+        }
+    }
+    
+    private func cancelDismissToastTask() {
+        dismissToastTask?.cancel()
+        dismissToastTask = nil
     }
 
     @ViewBuilder
@@ -91,7 +113,9 @@ public extension View {
         - isPresented: A binding to a boolean value that determines whether the toast is presented.
         - message: The message text to be displayed in the toast.
         - duration: The duration in seconds for which the toast is displayed. The default value is 2 seconds.
-        - position: The position on the screen where the toast is displayed. The default is `.center`.
+        - position: The position on the screen where the toast is displayed. This can be `.top`, `.center`, or `.bottom`. The default is `.center`.
+        - style: A `ToastStyle` struct used to customize the appearance of the toast, such as background color, text color, corner radius, etc. By default, a standard `ToastStyle` will be applied.
+        - onTap: A closure that is triggered when the toast is tapped.
 
      - Returns: A view that displays the original content overlaid with a toast notification when `isPresented` is `true`.
 
@@ -110,7 +134,8 @@ public extension View {
         message: String,
         duration: Double = 2,
         position: ToastPosition = .center,
-        style: ToastStyle = ToastStyle()
+        style: ToastStyle = ToastStyle(),
+        onTap: (() -> Void)? = nil
     ) -> some View {
         modifier(
             EasyToast(
@@ -118,7 +143,8 @@ public extension View {
                 message: message,
                 duration: duration,
                 position: position,
-                style: style
+                style: style,
+                onTap: onTap
             )
         )
     }
@@ -132,6 +158,7 @@ public extension View {
         - duration: The duration in seconds for which the toast is displayed. The default value is 2 seconds. After this time has passed, the toast will automatically disappear.
         - position: The position on the screen where the toast is displayed. This can be `.top`, `.center`, or `.bottom`. The default is `.center`.
         - type: The type of toast to display. This can be `.success`, `.error`, `.warning`, or `.info`. The type determines the default appearance of the toast. The default is `.info`.
+        - onTap: A closure that is triggered when the toast is tapped.
 
      - Returns: A view that displays the original content overlaid with a toast notification when `isPresented` is `true`.
 
@@ -148,7 +175,8 @@ public extension View {
         message: String,
         duration: Double = 2,
         position: ToastPosition = .center,
-        type: ToastType
+        type: ToastType,
+        onTap: (() -> Void)? = nil
     ) -> some View {
         modifier(
             EasyToast(
@@ -156,7 +184,8 @@ public extension View {
                 message: message,
                 duration: duration,
                 position: position,
-                style: type.style
+                style: type.style,
+                onTap: onTap
             )
         )
     }
