@@ -13,20 +13,20 @@
 ## ✨ Features
 
 - **Simple Text Toasts**: Display a quick message to the user with just a few lines of code.
-- **Custom Toast Views**: Create and display fully custom-designed toast notifications.
 - **Flexible Positioning**: Position the toast at the top, center, or bottom of the screen.
 - **Configurable Duration**: Control how long the toast remains visible.
 - **Customizable appearance**: Control background color, text color, corner radius, font, padding, shadow, and text alignment
-- **Interactive toasts**: Working in progress 🔨
+- **Predefined toast types**: Use built-in styles like .success, .error, .warning, and .info.
+- **Interactive toasts**: User can create an `onTap` closure to add custom behavior when the toast is tapped.
+- **Custom Toast Views**: Create and display fully custom-designed toast notifications.
 - **Toast queueing**: Working in progress 🔨
 - **Improved animations**: Working in progress 🔨
-- **Internationalization**: Working in progress 🔨
 - **Accessibility support**: Working in progress 🔨
 
 ## 🧳 Requirements
 
-- iOS 15.0+
-- Swift 5+
+- iOS >= 15.0
+- Swift >= 5.9
 
 ## 💻 Installation
 

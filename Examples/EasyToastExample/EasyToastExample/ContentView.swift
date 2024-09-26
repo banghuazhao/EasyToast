@@ -15,6 +15,7 @@ struct ContentView: View {
     @State var showCustomToastStyle2: Bool = false
     @State var showCustomToastStyle3: Bool = false
     @State var showToastTypeSuccess: Bool = false
+    @State var showOnTapToastView: Bool = false
     @State var showCustomToastView: Bool = false
 
     var body: some View {
@@ -42,6 +43,9 @@ struct ContentView: View {
             }
             Button("Toast Type Success") {
                 showToastTypeSuccess = true
+            }
+            Button("Tap toast example") {
+                showOnTapToastView = true
             }
             Button("Custom Toast View") {
                 showCustomToastView = true
@@ -81,6 +85,11 @@ struct ContentView: View {
             message: "Operation Successful",
             type: .success
         )
+        .easyToast(isPresented: $showOnTapToastView, message: "Tap toast example", duration: 5) {
+            withAnimation {
+                showOnTapToastView = false
+            }
+        }
         .customToast(isPresented: $showCustomToastView) {
             HStack {
                 Image(systemName: "checkmark.circle")
