@@ -19,9 +19,10 @@
 - **Predefined toast types**: Use built-in styles like .success, .error, .warning, and .info.
 - **Interactive toasts**: User can create an `onTap` closure to add custom behavior when the toast is tapped.
 - **Custom Toast Views**: Create and display fully custom-designed toast notifications.
+- **Improved animations**: Additional animations and transitions to enhance the toast appearance and disappearance.
 - **Toast queueing**: Working in progress 🔨
-- **Improved animations**: Working in progress 🔨
 - **Accessibility support**: Working in progress 🔨
+- **Unit tests**: Working in progress 🔨
 
 ## 🧳 Requirements
 
@@ -42,7 +43,7 @@ You can add EasyToast to your project using [Swift Package Manager](https://swif
 Alternatively, add the following to your `Package.swift` file:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/banghuazhao/EasyToast.git", from: "0.1")
+    .package(url: "https://github.com/banghuazhao/EasyToast.git", from: "0.4.0")
 ]
 ```
 
@@ -127,6 +128,29 @@ var body: some View {
 ```
 
 <img src="./Images/3.png" width=200 />
+
+### Dismissing the Toast
+```swift
+@State private var showToast = false
+
+var body: some View {
+    VStack {
+        Button("Show Toast") {
+            showToast = true
+        }
+    }
+    .easyToast(
+        isPresented: $showToast,
+        message: "Tap to dismiss",
+        onTap: {
+            print("Toast tapped, dismissing")
+            showToast = false
+        }
+    )
+}
+
+
+```
 
 ## 💡 Idea
 
