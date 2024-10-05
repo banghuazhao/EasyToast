@@ -2,7 +2,6 @@
 // Created by Banghua Zhao on 19/09/2024
 // Copyright Apps Bay Limited. All rights reserved.
 //
-  
 
 import SwiftUI
 
@@ -10,17 +9,20 @@ struct CustomToast<CustomView: View>: ViewModifier {
     @Binding var isPresented: Bool
     private let duration: Double
     private let position: ToastPosition
+    private let animation: ToastAnimation
     let customView: CustomView
 
     init(
         isPresented: Binding<Bool>,
         position: ToastPosition,
         duration: Double,
+        animation: ToastAnimation,
         customView: CustomView
     ) {
         _isPresented = isPresented
         self.duration = duration
         self.position = position
+        self.animation = animation
         self.customView = customView
     }
 
@@ -30,7 +32,7 @@ struct CustomToast<CustomView: View>: ViewModifier {
         content
             .overlay(alignment: alignment) {
                 if showToast {
-                    toast
+                    toastView
                 }
             }
             .onChange(of: isPresented) { newValue in
@@ -49,24 +51,9 @@ struct CustomToast<CustomView: View>: ViewModifier {
             }
     }
 
-    @ViewBuilder
-    private var toast: some View {
-        switch position {
-        case .top:
-            toastView
-                .transition(.move(edge: .top).combined(with: .opacity))
-        case .center:
-            toastView
-                .transition(.opacity)
-        case .bottom:
-            toastView
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-        }
-    }
-
-    @ViewBuilder
     private var toastView: some View {
         customView
+            .transition(animation.transition)
     }
 
     private var alignment: Alignment {
@@ -89,6 +76,7 @@ public extension View {
         - isPresented: A binding to a boolean value that determines whether the toast is presented.
         - duration: The duration in seconds for which the toast is displayed. The default value is 2 seconds.
         - position: The position on the screen where the toast is displayed. The default is `.center`.
+        - animation: A `ToastAnimation` value that determines the animation for the toast. The available options are `.fade`, `.slide(Edge)`, `.scale`, or `.custom(AnyTransition)`. The default animation is `.fade`.
         - customView: A closure that returns the custom view to be displayed as the toast content.
 
      - Returns: A view that displays the original content overlaid with a custom toast view when `isPresented` is `true`.
@@ -117,6 +105,7 @@ public extension View {
         isPresented: Binding<Bool>,
         duration: Double = 2,
         position: ToastPosition = .center,
+        animation: ToastAnimation = .fade,
         @ViewBuilder customView: @escaping () -> some View
     ) -> some View {
         modifier(
@@ -124,6 +113,7 @@ public extension View {
                 isPresented: isPresented,
                 position: position,
                 duration: duration,
+                animation: animation,
                 customView: customView()
             )
         )
