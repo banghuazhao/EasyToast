@@ -9,8 +9,6 @@ import SwiftUI
 struct ContentView: View {
     @State var showToast: Bool = false
     @State var showDefaultToastOnTop: Bool = false
-    @State var showDefaultToastOnCenter: Bool = false
-    @State var showDefaultToastOnBottom: Bool = false
     @State var showCustomToastStyle1: Bool = false
     @State var showCustomToastStyle2: Bool = false
     @State var showCustomToastStyle3: Bool = false
@@ -18,7 +16,9 @@ struct ContentView: View {
     @State var showOnTapToastView: Bool = false
     @State var showSlideAnimationToastView: Bool = false
     @State var showScaleAnimationToastView: Bool = false
-    @State var showCustomToastView: Bool = false
+    @State var selectedCustomToast: String? = nil // For item-based toast example
+    @State var selectedGradientToast: String? = nil
+    @State var selectedActionToast: String? = nil
 
     var body: some View {
         List {
@@ -27,12 +27,6 @@ struct ContentView: View {
             }
             Button("Default Toast on Top") {
                 showDefaultToastOnTop = true
-            }
-            Button("Default Toast on Center") {
-                showDefaultToastOnCenter = true
-            }
-            Button("Default Toast on Bottom") {
-                showDefaultToastOnBottom = true
             }
             Button("Custom Toast Style 1: background and text color") {
                 showCustomToastStyle1 = true
@@ -55,15 +49,19 @@ struct ContentView: View {
             Button("Scale animation toast example") {
                 showScaleAnimationToastView = true
             }
-            Button("Custom Toast View") {
-                showCustomToastView = true
+            Button("Custom Toast View (item-based)") {
+                selectedCustomToast = "Show Toast Success"
+            }
+            Button("Gradient Toast") {
+                selectedGradientToast = "Gradient Toast!"
+            }
+            Button("Toast with Action") {
+                selectedActionToast = "Tap to Undo"
             }
         }
-        .easyToast(isPresented: $showToast, message: "Default Toast")
-        .easyToast(isPresented: $showDefaultToastOnTop, message: "Default Toast on Top", position: .top)
-        .easyToast(isPresented: $showDefaultToastOnCenter, message: "Default Toast on Center", position: .center)
-        .easyToast(isPresented: $showDefaultToastOnBottom, message: "Default Toast on Bottom", position: .bottom)
-        .easyToast(
+        .toast(isPresented: $showToast, message: "Default Toast")
+        .toast(isPresented: $showDefaultToastOnTop, message: "Default Toast on Top", position: .top)
+        .toast(
             isPresented: $showCustomToastStyle1,
             message: "Custom Toast Style 1",
             style: ToastStyle(
@@ -71,7 +69,7 @@ struct ContentView: View {
                 textColor: .white
             )
         )
-        .easyToast(
+        .toast(
             isPresented: $showCustomToastStyle2,
             message: "Custom Toast Style 2",
             style: ToastStyle(
@@ -80,7 +78,7 @@ struct ContentView: View {
                 padding: .init(top: 10, leading: 20, bottom: 10, trailing: 20)
             )
         )
-        .easyToast(
+        .toast(
             isPresented: $showCustomToastStyle3,
             message: "Custom Toast Style 3: shadow and text alignment and more text for test",
             style: ToastStyle(
@@ -88,35 +86,70 @@ struct ContentView: View {
                 multilineTextAlignment: .leading
             )
         )
-        .easyToast(
+        .toast(
             isPresented: $showToastTypeSuccess,
             message: "Operation Successful",
             type: .success
         )
-        .easyToast(isPresented: $showOnTapToastView, message: "Tap toast example", duration: 5) {
+        .toast(isPresented: $showOnTapToastView, message: "Tap toast example", duration: 5) {
             withAnimation {
                 showOnTapToastView = false
             }
         }
-        .easyToast(
+        .toast(
             isPresented: $showSlideAnimationToastView,
             message: "Slide from top animation toast example",
             animation: .slide(.top)
         )
-        .easyToast(
+        .toast(
             isPresented: $showScaleAnimationToastView,
             message: "Scale animation toast example",
             animation: .scale
         )
-        .customToast(isPresented: $showCustomToastView) {
+        // Example of the new item-based toast API
+        .toast(item: $selectedCustomToast) { value in
             HStack {
                 Image(systemName: "checkmark.circle")
                     .foregroundColor(.white)
-                Text("Show Toast Success")
+                Text(value)
                     .foregroundColor(.white)
             }
             .padding()
             .background(Color.green)
+            .cornerRadius(20)
+        }
+        .toast(item: $selectedGradientToast) { value in
+            HStack {
+                Image(systemName: "flame.fill")
+                    .foregroundColor(.white)
+                Text(value)
+                    .foregroundColor(.white)
+            }
+            .padding()
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [.purple, .blue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .cornerRadius(20)
+        }
+        .toast(item: $selectedActionToast, duration: 5) {
+            selectedActionToast = nil
+        } content: { value in
+            HStack {
+                Image(systemName: "arrow.uturn.left")
+                    .foregroundColor(.white)
+                Text(value)
+                    .foregroundColor(.white)
+                Spacer()
+                Text("Undo")
+                    .bold()
+                    .foregroundColor(.yellow)
+            }
+            .padding()
+            .background(Color.orange)
             .cornerRadius(20)
         }
     }
