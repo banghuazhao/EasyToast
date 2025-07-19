@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-struct EasyToast: ViewModifier {
+public struct ToastModifier: ViewModifier {
     @Binding var isPresented: Bool
     private let message: String
     private let duration: Double
@@ -17,7 +17,7 @@ struct EasyToast: ViewModifier {
     @State private var showToast: Bool = false
     @State private var dismissToastTask: Task<Void, Never>?
 
-    init(
+    public init(
         isPresented: Binding<Bool>,
         message: String,
         duration: TimeInterval,
@@ -26,7 +26,7 @@ struct EasyToast: ViewModifier {
         animation: ToastAnimation,
         onTap: (() -> Void)? = nil
     ) {
-        _isPresented = isPresented
+        self._isPresented = isPresented
         self.message = message
         self.duration = duration
         self.position = position
@@ -46,22 +46,26 @@ struct EasyToast: ViewModifier {
                 }
             }
             .onChange(of: isPresented) { newValue in
-                if newValue == true {
-                    withAnimation {
-                        showToast = true
-                    }
-                    cancelDismissToastTask() // Cancel the existing task if it exists
-                    dismissToastTask = Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: UInt64(duration) * 1000000000)
-                        dismissToast()
-                    }
-                } else {
-                    cancelDismissToastTask() // Cancel the existing task if it exists
-                    withAnimation {
-                        showToast = false
-                    }
-                }
+                handlePresentationChange(newValue)
             }
+    }
+
+    private func handlePresentationChange(_ newValue: Bool) {
+        if newValue {
+            withAnimation {
+                showToast = true
+            }
+            cancelDismissToastTask()
+            dismissToastTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+                dismissToast()
+            }
+        } else {
+            cancelDismissToastTask()
+            withAnimation {
+                showToast = false
+            }
+        }
     }
 
     private func dismissToast() {
@@ -84,11 +88,11 @@ struct EasyToast: ViewModifier {
     private var alignment: Alignment {
         switch position {
         case .top:
-            .top
+            return .top
         case .center:
-            .center
+            return .center
         case .bottom:
-            .bottom
+            return .bottom
         }
     }
 }
@@ -115,10 +119,10 @@ public extension View {
      Example usage:
      ```swift
      Text("Hello, World!")
-         .easyToast(isPresented: $showToast, message: "This is a toast message")
+         .toast(isPresented: $showToast, message: "This is a toast message")
      ```
      */
-    func easyToast(
+    func toast(
         isPresented: Binding<Bool>,
         message: String,
         duration: Double = 2,
@@ -128,7 +132,7 @@ public extension View {
         onTap: (() -> Void)? = nil
     ) -> some View {
         modifier(
-            EasyToast(
+            ToastModifier(
                 isPresented: isPresented,
                 message: message,
                 duration: duration,
@@ -141,13 +145,13 @@ public extension View {
     }
 
     /**
-     Displays a toast notification with a text message.
+     Displays a toast notification with a text message and type.
 
      - Parameters:
-        - isPresented: A binding to a boolean value that determines whether the toast is presented. Set this to `true` to show the toast, and the toast will automatically disappear after the specified duration.
-        - message: The message text to be displayed in the toast. This is a `String` value and will be the content of the toast notification.
-        - duration: The duration in seconds for which the toast is displayed. The default value is 2 seconds. After this time has passed, the toast will automatically disappear.
-        - position: The position on the screen where the toast is displayed. This can be `.top`, `.center`, or `.bottom`. The default is `.center`.
+        - isPresented: A binding to a boolean value that determines whether the toast is presented.
+        - message: The message text to be displayed in the toast.
+        - duration: The duration in seconds for which the toast is displayed. The default value is 2 seconds.
+        - position: The position on the screen where the toast is displayed. The default is `.center`.
         - type: The type of toast to display. This can be `.success`, `.error`, `.warning`, or `.info`. The type determines the default appearance of the toast. The default is `.info`.
         - animation: A `ToastAnimation` value that determines the animation for the toast. The available options are `.fade`, `.slide(Edge)`, `.scale`, or `.custom(AnyTransition)`. The default animation is `.fade`.
         - onTap: A closure that is triggered when the toast is tapped.
@@ -159,10 +163,10 @@ public extension View {
      Example usage:
      ```swift
      Text("Hello, World!")
-         .easyToast(isPresented: $showToast, message: "Operation Successful", type: .success)
+         .toast(isPresented: $showToast, message: "Operation Successful", type: .success)
      ```
-     **/
-    func easyToast(
+     */
+    func toast(
         isPresented: Binding<Bool>,
         message: String,
         duration: Double = 2,
@@ -172,7 +176,7 @@ public extension View {
         onTap: (() -> Void)? = nil
     ) -> some View {
         modifier(
-            EasyToast(
+            ToastModifier(
                 isPresented: isPresented,
                 message: message,
                 duration: duration,
@@ -181,6 +185,48 @@ public extension View {
                 animation: animation,
                 onTap: onTap
             )
+        )
+    }
+
+    @available(*, deprecated, message: "Use .toast instead.")
+    func easyToast(
+        isPresented: Binding<Bool>,
+        message: String,
+        duration: Double = 2,
+        position: ToastPosition = .center,
+        style: ToastStyle = ToastStyle(),
+        animation: ToastAnimation = .fade,
+        onTap: (() -> Void)? = nil
+    ) -> some View {
+        self.toast(
+            isPresented: isPresented,
+            message: message,
+            duration: duration,
+            position: position,
+            style: style,
+            animation: animation,
+            onTap: onTap
+        )
+    }
+
+    @available(*, deprecated, message: "Use .toast instead.")
+    func easyToast(
+        isPresented: Binding<Bool>,
+        message: String,
+        duration: Double = 2,
+        position: ToastPosition = .center,
+        type: ToastType,
+        animation: ToastAnimation = .fade,
+        onTap: (() -> Void)? = nil
+    ) -> some View {
+        self.toast(
+            isPresented: isPresented,
+            message: message,
+            duration: duration,
+            position: position,
+            type: type,
+            animation: animation,
+            onTap: onTap
         )
     }
 }

@@ -1,57 +1,81 @@
 # EasyToast
 
+> **A lightweight, customizable SwiftUI toast notification library for iOS and macOS.**
+
 [![Version](https://img.shields.io/github/v/release/banghuazhao/EasyToast)](https://github.com/banghuazhao/EasyToast/releases)
 [![License](https://img.shields.io/github/license/banghuazhao/EasyToast)](LICENSE)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fbanghuazhao%2FEasyToast%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/banghuazhao/EasyToast)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fbanghuazhao%2FEasyToast%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/banghuazhao/EasyToast)
 
-## Introduction
+## 📸 Screenshots
 
-**EasyToast** is a lightweight and customizable SwiftUI package that provides easy-to-use toast notifications. Display brief messages to your users with minimal effort.
+<p align="center">
+  <img src="screenshots/1.png" width="220" />
+  <img src="screenshots/2.png" width="220" />
+  <img src="screenshots/3.png" width="220" />
+</p>
 
+---
+
+## 📚 Table of Contents
+
+- [EasyToast](#easytoast)
+  - [📸 Screenshots](#-screenshots)
+  - [📚 Table of Contents](#-table-of-contents)
+  - [✨ Features](#-features)
+  - [❓ Why EasyToast?](#-why-easytoast)
+  - [💻 Installation](#-installation)
+    - [Swift Package Manager](#swift-package-manager)
+  - [🚀 Getting Started](#-getting-started)
+  - [🛠 Usage](#-usage)
+    - [Simple Toast](#simple-toast)
+    - [Toast on Top](#toast-on-top)
+    - [Customization](#customization)
+    - [Predefined Types](#predefined-types)
+  - [🍭 Item-based \& Custom Toasts](#-item-based--custom-toasts)
+    - [Item-based Toast](#item-based-toast)
+    - [Advanced Custom Toasts](#advanced-custom-toasts)
+  - [🕰️ Backward Compatibility](#️-backward-compatibility)
+  - [License](#license)
+
+---
 
 ## ✨ Features
 
 - **Simple Text Toasts**: Display a quick message to the user with just a few lines of code.
 - **Flexible Positioning**: Position the toast at the top, center, or bottom of the screen.
 - **Configurable Duration**: Control how long the toast remains visible.
-- **Customizable appearance**: Control background color, text color, corner radius, font, padding, shadow, and text alignment
-- **Predefined toast types**: Use built-in styles like .success, .error, .warning, and .info.
-- **Interactive toasts**: User can create an `onTap` closure to add custom behavior when the toast is tapped.
-- **Custom Toast Views**: Create and display fully custom-designed toast notifications.
-- **Improved animations**: Additional animations and transitions to enhance the toast appearance and disappearance.
-- **Toast queueing**: Working in progress 🔨
-- **Accessibility support**: Working in progress 🔨
-- **Unit tests**: Working in progress 🔨
+- **Customizable Appearance**: Background color, text color, corner radius, font, padding, shadow, and text alignment.
+- **Predefined Toast Types**: Use built-in styles like `.success`, `.error`, `.warning`, and `.info`.
+- **Interactive Toasts**: Add custom behavior when the toast is tapped.
+- **Custom Toast Views**: Display fully custom-designed toast notifications.
+- **Item-based Toasts**: Show a toast for any optional item, with a custom view for each value.
+- **Swift Package Manager Support**: Easy integration into your project.
 
-## 🧳 Requirements
+---
 
-- iOS >= 15.0
-- Swift >= 5.9
+## ❓ Why EasyToast?
+
+EasyToast is designed for SwiftUI developers who want a simple, flexible, and modern way to show toast notifications. It supports both quick messages and fully custom views, with smooth animations and easy configuration.
+
+---
 
 ## 💻 Installation
 
 ### Swift Package Manager
 
-You can add EasyToast to your project using [Swift Package Manager](https://swift.org/package-manager/).
+Add EasyToast to your project:
 
-1. Open your project in Xcode.
-2. Go to `File > Add Packages Dependencies...`
-3. Enter the package URL: https://github.com/banghuazhao/EasyToast
-3. Choose the latest release
-
-Alternatively, add the following to your `Package.swift` file:
 ```swift
-dependencies: [
-    .package(url: "https://github.com/banghuazhao/EasyToast.git", from: "0.4.0")
-]
+.package(url: "https://github.com/banghuazhao/EasyToast.git", from: "0.4.0")
 ```
 
-## 🛠 Usage
+Or use Xcode:  
+`File > Add Packages...` and enter the repo URL.
 
-### Quick Start
+---
 
-To display a simple toast with a message, use the `easyToast` modifier:
+## 🚀 Getting Started
 
 ```swift
 import EasyToast
@@ -60,101 +84,118 @@ struct ContentView: View {
     @State private var showToast = false
 
     var body: some View {
-        content
-            .easyToast(isPresented: $showToast, message: "Hello, EasyToast!")
+        VStack {
+            Button("Show Toast") { showToast = true }
+        }
+        .toast(isPresented: $showToast, message: "Hello, EasyToast!")
     }
 }
 ```
 
-<img src="./Images/1.png" width=200 />
+---
 
-### Displaying a Simple Toast on Top
+## 🛠 Usage
 
-To display a simple toast with a message, use the `easyToast` modifier:
+### Simple Toast
 
 ```swift
-var body: some View {
-    content
-        .easyToast(isPresented: $showToast, message: "This is a toast message on top", position: .top)
-}
+.toast(isPresented: $showToast, message: "This is a toast message!")
 ```
 
-<img src="./Images/2.png" width=200 />
+### Toast on Top
+
+```swift
+.toast(isPresented: $showToast, message: "On Top", position: .top)
+```
 
 ### Customization
 
-Customize the appearance and behavior:
-
 ```swift
-let customStyle = ToastStyle(
-    backgroundColor: .blue,
-    textColor: .white,
-    font: .headline,
-    cornerRadius: 12,
-    shadow: .gray,
-    padding: EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+.toast(
+    isPresented: $showToast,
+    message: "Custom Style",
+    style: ToastStyle(backgroundColor: .blue, textColor: .white)
 )
-
-Text("Custom Toast")
-    .easyToast(
-        isPresented: $showToast,
-        message: "This is a custom toast message.",
-        position: .bottom,
-        duration: 3
-        style: customStyle
-    )
-
 ```
 
-### Displaying a Custom Toast
-
-To display a custom-designed toast view, use the `easyToast` modifier with a custom view:
+### Predefined Types
 
 ```swift
-var body: some View {
-    content
-        .customToast(isPresented: $showToast, duration: 3, position: .bottom) {
-            HStack {
-                Image(systemName: "checkmark.circle")
-                    .foregroundColor(.white)
-                Text("Show Custom Toast Success")
-                    .foregroundColor(.white)
-            }
-            .padding()
-            .background(Color.green)
-            .cornerRadius(20)
-        }
-}
+.toast(isPresented: $showToast, message: "Success!", type: .success)
 ```
 
-<img src="./Images/3.png" width=200 />
+---
 
-### Dismissing the Toast
+## 🍭 Item-based & Custom Toasts
+
+### Item-based Toast
+
 ```swift
-@State private var showToast = false
+@State var selectedToast: String? = nil
 
-var body: some View {
-    VStack {
-        Button("Show Toast") {
-            showToast = true
-        }
+Button("Show Custom Toast") { selectedToast = "Custom Toast!" }
+
+.toast(item: $selectedToast) { value in
+    HStack {
+        Image(systemName: "checkmark.circle").foregroundColor(.white)
+        Text(value).foregroundColor(.white)
     }
-    .easyToast(
-        isPresented: $showToast,
-        message: "Tap to dismiss",
-        onTap: {
-            print("Toast tapped, dismissing")
-            showToast = false
-        }
-    )
+    .padding()
+    .background(Color.green)
+    .cornerRadius(20)
 }
-
-
 ```
 
-## 💡 Idea
+### Advanced Custom Toasts
 
-The toast is implemented by overlaying a custom view on top of the view that applies the `.easyToast` modifier, ensuring it seamlessly appears over the current content without disrupting the underlying layout
+**Gradient Toast:**
+```swift
+.toast(item: $selectedGradientToast) { value in
+    HStack {
+        Image(systemName: "flame.fill").foregroundColor(.white)
+        Text(value).foregroundColor(.white)
+    }
+    .padding()
+    .background(
+        LinearGradient(
+            gradient: Gradient(colors: [.purple, .blue]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    )
+    .cornerRadius(20)
+}
+```
+
+**Toast with Action:**
+```swift
+.toast(item: $selectedActionToast, duration: 5) {
+    selectedActionToast = nil
+} content: { value in
+    HStack {
+        Image(systemName: "arrow.uturn.left").foregroundColor(.white)
+        Text(value).foregroundColor(.white)
+        Spacer()
+        Text("Undo").bold().foregroundColor(.yellow)
+    }
+    .padding()
+    .background(Color.orange)
+    .cornerRadius(20)
+}
+```
+
+---
+
+## 🕰️ Backward Compatibility
+
+`.easyToast` is still available for backward compatibility, but is deprecated. Please migrate to `.toast` and `.toast(item:)` for new code.
+
+---
 
 ## License
+
 EasyToast is released under the MIT License. See LICENSE for details.
+
+---
+
+**Keywords:** SwiftUI toast, toast notification, custom toast, iOS, macOS, Swift Package Manager, SPM, SwiftUI library
